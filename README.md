@@ -1,8 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Research AI Assistant 🔬🤖
 
-## Getting Started
+An intelligent chatbot for comparative analysis of scientific research topics and authors, powered by real data from PubMed and OpenAlex APIs with AI responses from Cohere.
 
-First, run the development server:
+## Features
+
+✅ **Topic Analysis** - Analyze research topics (e.g., "Leukemia", "COVID-19")  
+✅ **Author Analysis** - Analyze individual researchers by name  
+✅ **Comparative Analysis** - Compare multiple topics and/or authors  
+✅ **Real-Time Data** - Fetches live data from PubMed (35M+ articles) and OpenAlex (240M+ works)  
+✅ **AI-Powered Chatbot** - Ask questions and get intelligent insights using Cohere AI  
+✅ **Visual Analytics** - Publication trends, top institutions, citation metrics  
+✅ **Publication Types** - Breakdown of journal articles, reviews, clinical trials, etc.
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Set Up Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+OPENALEX_EMAIL=your-email@example.com
+COHERE_API_KEY=your-cohere-api-key
+```
+
+### 3. Run the Development Server
 
 ```bash
 npm run dev
