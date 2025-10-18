@@ -1,44 +1,58 @@
 "use client";
 
-import React from 'react'; // <--- FIXED THIS LINE
-import { Send } from 'lucide-react';
-
-// For this to work, create a Message.tsx component as well.
-import Message from '@/components/Message';
+import React, { useState } from "react";
+import { Send } from "lucide-react";
+import Message from "@/components/Message";
 
 export interface MessageType {
   id: number;
   text: string;
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
 }
 
 const ChatWindow = () => {
-  const [messages, setMessages] = React.useState<MessageType[]>([
-    {
-      id: 1,
-      sender: 'bot',
-      text: "Hello! I'm ready to answer questions based on your analysis. What would you like to know?",
-    },
-  ]);
-  const [input, setInput] = React.useState('');
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [input, setInput] = useState("");
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: MessageType = {
       id: Date.now(),
-      sender: 'user',
+      sender: "user",
       text: input,
     };
 
-    const botResponse: MessageType = {
-      id: Date.now() + 1,
-      sender: 'bot',
-      text: 'Based on the analysis, publications on Leukemia have seen a 15% year-over-year growth, significantly higher than Lung Cancer.',
-    };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
 
-    setMessages([...messages, userMessage, botResponse]);
-    setInput('');
+    try {
+      // Call your Next.js API route
+      const res = await fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: input }),
+      });
+
+      const data = await res.json();
+
+      const botMessage: MessageType = {
+        id: Date.now() + 1,
+        sender: "bot",
+        text:
+          data.summary ||
+          "Sorry, I couldn’t find relevant information. Please try again.",
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (err) {
+      const errorMessage: MessageType = {
+        id: Date.now() + 2,
+        sender: "bot",
+        text: "An error occurred while fetching data. Please try again later.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
   };
 
   return (
@@ -48,13 +62,14 @@ const ChatWindow = () => {
           <Message key={msg.id} sender={msg.sender} text={msg.text} />
         ))}
       </div>
+
       <div className="border-t border-gray-200 p-4 bg-white flex-shrink-0">
         <div className="flex items-center space-x-2 rounded-lg border border-gray-300 bg-gray-50 p-3 focus-within:ring-2 focus-within:ring-purple-500 transition-all">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Ask a question about your analysis..."
             className="flex-grow bg-transparent text-gray-800 outline-none text-sm"
           />
